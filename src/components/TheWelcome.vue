@@ -149,7 +149,7 @@ const toggleEnglishExampleVisibility = () => {
         <div class="selected-word-list">
           <h2>Ausgewählte Wörter</h2>
           <ul class="list-group">
-            <li v-for="(word, index) in selectedWords" :key="index" class="list-group-item">{{ word.word }}</li>
+            <li v-for="(word, index) in selectedWords" :key="index" class="list-group-item">{{ word }}</li>
           </ul>
         </div>
       </div>

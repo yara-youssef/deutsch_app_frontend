@@ -27,7 +27,7 @@ onMounted(() => {
 <template>
 <ul>
       <!-- Loop through the items and display each item -->
-      <li v-for="item in items" :key="item">{{ item.word }}</li>
+      <li v-for="item in items" :key="item">{{ item }}</li>
     </ul>
     <TheWelcome />
   

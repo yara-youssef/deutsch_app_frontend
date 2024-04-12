@@ -61,6 +61,14 @@
     display: block;
   }
 
+  .word-in-word-list > button {
+    display: none;
+  }
+  
+  .word-in-word-list:hover > button {
+    display: block;
+  }
+
   .btn{
     background-color: #007bff;
     color: #fff;
@@ -144,3 +152,8 @@
     margin-right: 5px; /* Add spacing between checkbox and label text */
   }
   
+  .add-word-button{
+    cursor: pointer;
+    padding: 3px;
+    background-color: #007bff;
+  }

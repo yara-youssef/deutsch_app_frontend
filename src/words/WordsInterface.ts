@@ -7,8 +7,8 @@ export enum word_type {
 }
 
 export enum word_gender {
-    m = 'm',
-    f = 'f',
-    n = 'n',
-    p = 'p',
+    m = 'masculin',
+    f = 'feminin',
+    n = 'neutral',
+    p = 'plural',
 }

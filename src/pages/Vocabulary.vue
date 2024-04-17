@@ -16,6 +16,7 @@ later: add to DB
 <script setup lang="ts">
 import {ref, onMounted, watch } from 'vue';
 import { fetchWords, deleteWord, fetchFilteredWords } from '../services/wordService';
+import {word_source} from '../words/WordsInterface';
 import router from '@/router';
 
 // import {miroWords} from '../words/words';
@@ -88,15 +89,20 @@ const toggleViewMode = () => {
 }
 
 const filteredWords = () => {
-  if (!selectedType.value) {
-    // return miroWords;
-    return wordsList;
-  } else {
-    const filtered = wordsList.filter(word => word.type === selectedType.value);
-    totalNumber = filtered.length;
-    return filtered;
+  let filtered = wordsList;
+
+  if (selectedType.value) {
+    filtered = filtered.filter(word => word.type === selectedType.value);
   }
+  
+  if (selectedSource.value) {
+    filtered = filtered.filter(word => word.source === selectedSource.value);
+  }
+
+  totalNumber = filtered.length;
+  return filtered;
 };
+
 
 const nextWord = () => {
   const filtered = filteredWords();
@@ -166,18 +172,16 @@ const editWord = (word: any) => {
             <option value="verb">Verb</option>
             <option value="adjective">Adjektiv</option>
             <option value="adverb">Adverb</option>
+            <option value="preposition">Preposition</option>
             <!-- Add more options for other types if needed -->
           </select>
 
 
           <label for="filterSource">Nach Typ Source:</label>
-          <select id="filterSource" class="form-select" v-model="selectedSource">
-            <option value="">Alle sources</option>
-            <option value="list1">List 1</option>
-            <option value="list2">List 2</option>
-            <option value="miroBoard">miroBoard</option>
-            <option value="deutschKurs">deutschKurs</option>
-          </select>
+          <select v-model="selectedSource" class="form-select">
+              <option v-for="(value, key) in word_source" :key="key" :value="value">{{ value }}</option>
+            </select>
+          
 
           <div class="button-container">
             <button class="show-all-btn btn" @click="toggleViewMode">{{ viewMode === 'single' ? 'Alle Wörter anzeigen' : 'Einzelne Wörter anzeigen' }}</button>

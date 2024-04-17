@@ -56,7 +56,10 @@
 
         <div class="mb-3">
           <label :for="'source' + index" class="form-label">Quelle:</label>
-          <input type="text" :id="'source' + index" v-model="word.source" class="form-control">
+          <!-- <input type="text" :id="'source' + index" v-model="word.source" class="form-control"> -->
+          <select :id="'source' + index" v-model="word.source" class="form-select" required>
+              <option v-for="(value, key) in word_source" :key="key" :value="value">{{ value }}</option>
+            </select>
         </div>
 
         <div class="mb-3">
@@ -83,7 +86,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router'; // Update import
 import { createWord, updateWord } from '../services/wordService';
-import { word_type, word_gender } from '../words/WordsInterface';
+import { word_type, word_gender, word_source } from '../words/WordsInterface';
 import { fetchWordById } from '../services/wordService';
 
 const route = useRoute(); // Use useRoute() to access route information

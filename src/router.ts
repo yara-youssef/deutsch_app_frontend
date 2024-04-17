@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import Vocabulary from './pages/Vocabulary.vue';
+// import Vocabulary from './pages/Vocabulary.vue';
+import Vocabulary from '../src/pages/Vocabulary.vue';
 import Grammar from './pages/Grammar.vue';
 import Home from './pages/Home.vue';
 import AddWordForm from './pages/AddWordForm.vue'

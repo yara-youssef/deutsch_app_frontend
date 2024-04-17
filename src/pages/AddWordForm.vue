@@ -82,7 +82,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router'; // Update import
 import { createWord, updateWord } from '../services/wordService';
@@ -106,7 +106,7 @@ const wordId = route.params.id; // Get the word ID from the route parameters
 onMounted(async () => {
   if (wordId) {
     try {
-      const response = await fetchWordById(wordId);
+      const response = await fetchWordById(Array.isArray(wordId) ? wordId[0] : wordId);
       words.value[0] = response.data;
     } catch (error) {
       console.error('Error fetching word by ID:', error);
@@ -146,15 +146,21 @@ const addWord = () => {
   });
 };
 
-const handleImageUpload = (event, index) => {
-  const file = event.target.files[0]; // Get the selected file
-  if (file) {
+const handleImageUpload = (event: Event, index: number) => {
+  if (event.target) {
+    const file = (event.target as HTMLInputElement).files?.[0]; // Get the selected file
+
+    if (file) {
     const reader = new FileReader();
     reader.readAsDataURL(file); // Convert the file to base64 string
     reader.onload = () => {
       const img = new Image();
-      img.src = reader.result; // Set the source of the image to the base64 string
-
+      if (reader.result !== null && typeof reader.result === 'string') {
+      img.src = reader.result;
+    } else {
+      console.error('Error: reader.result is null or not a string');
+      return;
+    }
       img.onload = () => {
         const maxWidth = 500; // Maximum width in pixels
         const maxHeight = 500; // Maximum height in pixels
@@ -183,22 +189,34 @@ const handleImageUpload = (event, index) => {
         canvas.width = width;
         canvas.height = height;
 
+        if (ctx) {
         // Draw the resized image on the canvas
         ctx.drawImage(img, 0, 0, width, height);
-
+        }
         // Convert the resized image back to a data URL
-        const resizedDataURL = canvas.toDataURL('image/jpeg');
+        const resizedDataURL = canvas.toDataURL('image/jpeg') as string;
 
+        if (typeof resizedDataURL === 'string') {
+  // Use the resized image data URL as needed
+  words.value[index].image = resizedDataURL;
+}
         // Use the resized image data URL as needed
-        words.value[index].image = resizedDataURL;
+        // words.value[index].image = resizedDataURL;
       };
     };
+  } else {
+      console.error('No file selected');
+    }
+  } else {
+    console.error('Event target is null');
   }
+  // const file = event.target.files[0]; // Get the selected file
+  
 };
 
 const submitForm = () => {
   const promises = words.value.map(wordData => {
-    if (wordId) {
+    if (typeof wordId === 'string' && wordId) {
       // If editing, update the existing word
       return updateWord(wordId, wordData);
     } else {
@@ -206,6 +224,17 @@ const submitForm = () => {
       return createWord(wordData);
     }
   });
+
+// const submitForm = () => {
+//   const promises = words.value.map(wordData => {
+//     if (typeof wordId === 'string') {
+//       // If editing, update the existing word
+//       return updateWord(wordId, wordData);
+//     } else {
+//       return createWord(wordData);
+//     }
+//   });
+
 
   Promise.all(promises)
     .then(() => {

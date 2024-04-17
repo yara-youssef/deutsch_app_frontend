@@ -24,9 +24,14 @@ import router from '@/router';
 // import { words2, words3, words4, words5, words6, words7, words8, words9, miroWords } from '../words/words';
 // import { createWord } from '../services/wordService';
 
+interface Word {
+  // Define the properties of the Word interface
+}
+
 const currentIndex = ref(0);
 // const currentWord = ref(miroWords[currentIndex.value]);
-const currentWord = ref(null);
+
+const currentWord = ref<Word | null>(null);
 const selectedWords = ref([]);
 const typeVisible = ref(true);
 const translationVisible = ref(true);
@@ -53,10 +58,15 @@ const showGermanWord = ref(true);
 //   }
 // };
 
+interface Filter {
+  type?: string;
+  source?: string;
+}
+
 
 const fetchWordsFromAPI = async () => {
   try {
-    const filter = {};
+    const filter: Filter = {};
     if (selectedType.value) {
       filter['type'] = selectedType.value;
     }
@@ -66,8 +76,8 @@ const fetchWordsFromAPI = async () => {
     const response = selectedSource.value== '' || selectedSource.value==null  ? await fetchWords() : await fetchFilteredWords(filter);
     // const response = await fetchWords(filter);
     wordsList = response.data;
-    currentWord.value = wordsList.length > 0 ? wordsList[0] : null;
-    totalNumber = wordsList.length;
+    currentWord.value = wordsList.value.length > 0 ? wordsList.value[0] : null;
+    totalNumber.value = wordsList.value.length;
   } catch (error) {
     console.error('Error fetching words:', error);
   }
@@ -88,8 +98,21 @@ const toggleViewMode = () => {
   viewMode.value = viewMode.value === 'single' ? 'all' : 'single';
 }
 
+interface Word {
+  _id: string;
+  word: string;
+  type: string;
+  translation: string;
+  past_tense: string;
+  perfect_tense: string;
+  plural: string;
+  example_de: string;
+  example_en: string;
+  source: string;
+}
+
 const filteredWords = () => {
-  let filtered = wordsList;
+  let filtered: Word[] = wordsList.value; // Specify the type of 'filtered'
 
   if (selectedType.value) {
     filtered = filtered.filter(word => word.type === selectedType.value);
@@ -99,7 +122,7 @@ const filteredWords = () => {
     filtered = filtered.filter(word => word.source === selectedSource.value);
   }
 
-  totalNumber = filtered.length;
+  totalNumber.value = filtered.length;
   return filtered;
 };
 

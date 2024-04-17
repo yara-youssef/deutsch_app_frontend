@@ -8,10 +8,10 @@ export enum word_type {
 }
 
 export enum word_gender {
-    m = 'masculin',
-    f = 'feminin',
-    n = 'neutral',
-    p = 'plural',
+    masculin = 'masculin',
+    feminin = 'feminin',
+    neutral = 'neutral',
+    plural = 'plural',
 }
 
 export enum word_source {

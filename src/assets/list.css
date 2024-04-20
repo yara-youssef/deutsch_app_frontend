@@ -69,6 +69,10 @@
     display: block;
   }
 
+ .selected-word{
+    background-color: lavender;
+  }
+
   .btn{
     background-color: #007bff;
     color: #fff;

@@ -6,16 +6,16 @@ import { fetchWords, createWord as createWordAPI, updateWord as updateWordAPI, d
 const items = ref([]);
 
 /// fetch
-const fetchData = () => {
-  fetchWords()
-    .then(response => {
-      // Update the reactive variable with the received data
-      items.value = response.data;
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
-    });
-};
+// const fetchData = () => {
+//   fetchWords()
+//     .then(response => {
+//       // Update the reactive variable with the received data
+//       items.value = response.data;
+//     })
+//     .catch(error => {
+//       console.error('Error fetching data:', error);
+//     });
+// };
 
 
 // const createWord = (newWord: any) => {
@@ -56,9 +56,9 @@ const fetchData = () => {
 
 
 // Fetch data when the component is mounted
-onMounted(() => {
-  fetchData();
-});
+// onMounted(() => {
+//   fetchData();
+// });
 </script>
 
 <template>

@@ -86,7 +86,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router'; // Update import
 import { createWord, updateWord } from '../services/wordService';
-import { word_type, word_gender, word_source } from '../words/WordsInterface';
+import { word_type, word_gender, word_source } from '../interfaces/WordsInterface';
 import { fetchWordById } from '../services/wordService';
 
 const route = useRoute(); // Use useRoute() to access route information

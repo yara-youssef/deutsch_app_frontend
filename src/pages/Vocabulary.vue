@@ -16,7 +16,7 @@ later: add to DB
 <script setup lang="ts">
 import {ref, onMounted, watch } from 'vue';
 import { fetchWords, deleteWord, fetchFilteredWords } from '../services/wordService';
-import {word_source} from '../words/WordsInterface';
+import {word_source} from '../interfaces/WordsInterface';
 import router from '@/router';
 
 // import {miroWords} from '../words/words';
@@ -32,14 +32,14 @@ const currentIndex = ref(0);
 // const currentWord = ref(miroWords[currentIndex.value]);
 
 const currentWord = ref<Word | null>(null);
-const selectedWords = ref([]);
+  const selectedWords = ref<string[]>([]);
 const typeVisible = ref(true);
 const translationVisible = ref(true);
 const exampleVisible = ref(true);
 const englishExampleVisible = ref(true);
 const selectedType = ref('');
 const selectedSource = ref('');
-const viewMode = ref('single');
+const viewMode = ref('all');
 let wordsList = ref([]);
 let totalNumber = ref(0);
 
@@ -75,7 +75,8 @@ const fetchWordsFromAPI = async () => {
     }
     const response = selectedSource.value== '' || selectedSource.value==null  ? await fetchWords() : await fetchFilteredWords(filter);
     // const response = await fetchWords(filter);
-    wordsList = response.data;
+    wordsList.value = response.data;
+    
     currentWord.value = wordsList.value.length > 0 ? wordsList.value[0] : null;
     totalNumber.value = wordsList.value.length;
   } catch (error) {
@@ -177,6 +178,26 @@ const editWord = (word: any) => {
   router.push(`/vocabulary/wordform/${word._id}`);
 };
 
+const addToSelectedWordsList = (word: string) => {
+    if (!selectedWords.value.includes(word)) {
+        selectedWords.value.push(word);
+    } else {
+        selectedWords.value = selectedWords.value.filter(w => w !== word);
+    }
+};
+
+const isSelected = (word: string) => {
+    return selectedWords.value.includes(word);
+};
+
+const toggleSelection = (word: string) => {
+    if (!isSelected(word)) {
+        addToSelectedWordsList(word);
+    } else {
+        selectedWords.value = selectedWords.value.filter(w => w !== word);
+    }
+};
+
 
 
 </script>
@@ -250,7 +271,12 @@ const editWord = (word: any) => {
       <div class="word-list">
         <h2>Alle Wörter</h2>
         <div><button class="toggle-switch btn" :class="{ 'active': showGermanWord }" @click="showGermanWord=!showGermanWord"></button> Deutsches Wort anzeigen </div>
-        <div v-for="(word, index) in filteredWords()" :key="index" class="word-in-word-list">{{ showGermanWord? word.word : word.translation }}
+       <div class="row">
+        <div v-for="(word, index) in filteredWords()" 
+        @click="addToSelectedWordsList(word.word)"
+        :key="index"
+        :class="{ 'col-4 word-in-word-list': true,  'selected-word': selectedWords.includes(word.word) }"
+        >{{ showGermanWord? word.word : word.translation }}
           <div v-show="!showGermanWord"><span>Wort:</span> {{ word.word }}</div>  
           <div v-show="typeVisible"><span>Typ:</span> {{ word.type }}</div>
           <div v-show="translationVisible && showGermanWord"><span>Übersetzung (en):</span> {{ word.translation }}</div>
@@ -262,12 +288,12 @@ const editWord = (word: any) => {
           <button @click="deleteWordApi(word._id)">Delete</button>
         <div>
                <label>
-              <input type="checkbox" v-model="selectedWords" :value="word.word"> Zur Liste hinzufügen
+              <input type="checkbox" :checked="isSelected(word.word)" @change="toggleSelection(word.word)" :value="word.word"> Zur Liste hinzufügen
             </label>
             </div>
            
         </div>
-       
+      </div>
       </div>
     </div>
 
@@ -280,7 +306,8 @@ const editWord = (word: any) => {
           
           <h2>Ausgewählte Wörter</h2>
           <ul class="list-group">
-            <li v-for="(word, index) in selectedWords" :key="index" class="list-group-item">{{ word['word'] ?? word  }}</li>
+            <li v-for="(word, index) in selectedWords" :key="index" class="list-group-item">{{ word  }}</li>
+            <!-- <li v-for="(word, index) in selectedWords" :key="index" class="list-group-item">{{ word['word'] ?? word  }}</li> -->
           </ul>
         </div>
       </div>
